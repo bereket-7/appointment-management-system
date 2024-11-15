@@ -4,9 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 @Entity
@@ -36,6 +39,14 @@ public class Appointment {
 
     @Column(name = "DELETED", nullable = false, columnDefinition = "boolean default false")
     private boolean deleted = false;
+
+    @CreationTimestamp
+    @Column(name = "CREATION_DATE")
+    private Timestamp creationDate;
+
+    @UpdateTimestamp
+    @Column(name = "LAST_UPDATE_DATE")
+    private Timestamp lastUpdateDate;
 
     public Appointment() {
     }
