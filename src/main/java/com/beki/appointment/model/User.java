@@ -1,7 +1,6 @@
 package com.beki.appointment.model;
 
 import com.beki.appointment.common.UserRole;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,9 +69,7 @@ public class User {
     @Column(name = "LOGIN_OTP_REQUIRED", nullable = false)
     private boolean loginOtpRequired = false;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ROLE_ID")
-    @JsonManagedReference
+    @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
     @CreationTimestamp
