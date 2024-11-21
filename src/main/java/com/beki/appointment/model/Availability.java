@@ -9,22 +9,24 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-@Table(name = "AVAILABILITY")
+@Table(name = "AVAILABILITY", indexes = {
+        @Index(name = "idx_availability_id", columnList = "id, PROVIDER_ID")
+})
 public class Availability {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Column(name = "provider_id", nullable = false)
+    @Column(name = "PROVIDER_ID", nullable = false)
     private Long providerId;
 
-    @Column(name = "start_time", nullable = false)
+    @Column(name = "START_TIME")
     private LocalDateTime startTime;
 
-    @Column(name = "end_time", nullable = false)
+    @Column(name = "END_TIME")
     private LocalDateTime endTime;
 
-    @Column(name = "is_booked", nullable = false)
+    @Column(name = "IS_BOOKED", nullable = false)
     private boolean isBooked = false;
 
 }

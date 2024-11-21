@@ -15,11 +15,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-@ToString
-@Table(name = "APPOINTMENT", indexes = {
-        @Index(name = "u_uuid_index", columnList = "UUID"),
-        @Index(name = "idx_appointment", columnList = "APPOINTMENT_ID, USERNAME")
-})
+@Table(name = "APPOINTMENT")
 @Where(clause = "deleted = false")
 @SQLDelete(sql = "UPDATE APPOINTMENT SET deleted = true WHERE APPOINTMENT_ID = ?")
 public class Appointment {
