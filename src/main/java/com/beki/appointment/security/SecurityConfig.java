@@ -38,7 +38,6 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .oauth2Login(withDefaults())
                 .exceptionHandling(handler -> handler
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class);
