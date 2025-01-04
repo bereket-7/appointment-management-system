@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>List Availability</title>
+</head>
+<body>
+<h1>Available Slots</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Provider ID</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Booked</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="availability : ${availabilities}">
+        <td th:text="${availability.providerId}"></td>
+        <td th:text="${availability.startTime}"></td>
+        <td th:text="${availability.endTime}"></td>
+        <td th:text="${availability.booked}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
