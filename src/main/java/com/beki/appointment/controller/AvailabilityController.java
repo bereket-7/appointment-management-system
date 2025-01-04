@@ -26,6 +26,11 @@ public class AvailabilityController {
         Availability availability = availabilityService.createAvailability(providerId, startTime, endTime);
         return new ResponseEntity<>(availability, HttpStatus.CREATED);
     }
+ @PostMapping("/create")
+    public String createAvailability(@ModelAttribute Availability availability) {
+     availabilityService.createAvailability(availability.getProviderId(), availability.getStartTime(), availability.getEndTime());
+     return "redirect:/availability/list";
+ }
 
     @GetMapping("/available-slots")
     public ResponseEntity<List<Availability>> getAvailableSlots(@RequestParam Long providerId) {
