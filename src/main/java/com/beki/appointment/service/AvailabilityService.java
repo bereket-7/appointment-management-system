@@ -1,5 +1,6 @@
 package com.beki.appointment.service;
 
+import com.beki.appointment.common.AvailabilityDto;
 import com.beki.appointment.model.Availability;
 import com.beki.appointment.repository.AvailabilityRepository;
 import org.springframework.stereotype.Service;
@@ -17,16 +18,15 @@ public class AvailabilityService {
         this.availabilityRepository = availabilityRepository;
     }
 
-    public Availability createAvailability(Long providerId, LocalDateTime startTime, LocalDateTime endTime) {
-        Availability availability = new Availability();
-        availability.setProviderId(providerId);
-        availability.setStartTime(startTime);
-        availability.setEndTime(endTime);
-        return availabilityRepository.save(availability);
-    }
-
     public List<Availability> getAvailableSlots(Long providerId) {
         return availabilityRepository.findByProviderIdAndIsBookedFalse(providerId);
+    }
+
+    public List<AvailabilityDto> getAvailabilityByProvider(Long providerId) {
+        return null;
+    }
+
+    public void deleteAvailability(Long id) {
     }
 }
 
