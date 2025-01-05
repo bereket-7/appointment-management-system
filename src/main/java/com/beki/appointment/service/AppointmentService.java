@@ -2,6 +2,7 @@ package com.beki.appointment.service;
 
 import com.beki.appointment.common.AdminDashboardDto;
 import com.beki.appointment.common.AppointmentDto;
+import com.beki.appointment.common.AppointmentStatus;
 import com.beki.appointment.exception.GeneralException;
 import com.beki.appointment.model.Appointment;
 import com.beki.appointment.repository.AppointmentRepository;
@@ -12,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.beki.appointment.common.AppointmentStatus.CANCELED;
+import static com.beki.appointment.common.AppointmentStatus.*;
 
 @Service
 public class AppointmentService {
@@ -36,7 +37,7 @@ public class AppointmentService {
      * Get appointments by date.
      */
     public List<AppointmentDto> getAppointmentsByDate(Date date) {
-        List<Appointment> appointments = appointmentRepository.findByDate(date);
+        List<Appointment> appointments = appointmentRepository.findByTargetDate(date);
         return appointments.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
@@ -53,11 +54,11 @@ public class AppointmentService {
     /**
      * Get admin dashboard summary.
      */
-    public AdminDashboardDto getAdminDashboard() {
+    public AdminDashboardDto getAdminDashboard(AppointmentStatus appointmentStatus) {
         long totalProviders = appointmentRepository.countDistinctProviders();
         long totalAppointments = appointmentRepository.count();
-        long totalActiveAppointments = appointmentRepository.countByStatus("Scheduled");
-        long totalCompletedAppointments = appointmentRepository.countByStatus("Completed");
+        long totalActiveAppointments = appointmentRepository.countByAppointmentStatus(appointmentStatus);
+        long totalCompletedAppointments = appointmentRepository.countByAppointmentStatus(appointmentStatus);
 
         AdminDashboardDto dashboardDto = new AdminDashboardDto();
         dashboardDto.setTotalProviders(totalProviders);
