@@ -1,9 +1,7 @@
 package com.beki.appointment.controller;
 
-import com.beki.appointment.common.AdminDashboardDto;
-import com.beki.appointment.common.AppointmentDto;
-import com.beki.appointment.common.AvailabilityDto;
-import com.beki.appointment.common.ServiceProviderDto;
+import com.beki.appointment.AppointmentApplication;
+import com.beki.appointment.common.*;
 import com.beki.appointment.service.AppointmentService;
 import com.beki.appointment.service.AvailabilityService;
 import com.beki.appointment.service.ServiceProviderService;
@@ -111,7 +109,7 @@ public class AdminController {
      * Get a summary of system statistics (e.g., total providers, appointments, etc.).
      */
     @GetMapping("/dashboard")
-    public ResponseEntity<AdminDashboardDto> getAdminDashboard() {
-        return ResponseEntity.ok(appointmentService.getAdminDashboard());
+    public ResponseEntity<AdminDashboardDto> getAdminDashboard(@RequestParam AppointmentStatus appointmentStatus) {
+        return ResponseEntity.ok(appointmentService.getAdminDashboard(appointmentStatus));
     }
 }
