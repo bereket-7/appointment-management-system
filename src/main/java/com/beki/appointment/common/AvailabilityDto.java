@@ -2,12 +2,14 @@ package com.beki.appointment.common;
 
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Data
 public class AvailabilityDto {
     private Long id;
     private Long providerId;
-    private String date;
-    private String startTime;
-    private String endTime;
-    private int slotDuration;
+    private LocalDate date;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }
