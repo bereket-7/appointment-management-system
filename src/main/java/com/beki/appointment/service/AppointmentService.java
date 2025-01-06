@@ -6,24 +6,65 @@ import com.beki.appointment.common.AppointmentStatus;
 import com.beki.appointment.exception.GeneralException;
 import com.beki.appointment.model.Appointment;
 import com.beki.appointment.repository.AppointmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.beki.appointment.repository.ServiceProviderRepository;
+import com.beki.appointment.repository.UserRepository;
+import lombok.val;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.beki.appointment.common.AppointmentStatus.*;
+import static com.beki.appointment.common.AppointmentStatus.CANCELED;
+import static com.beki.appointment.common.AppointmentStatus.SCHEDULED;
 
 @Service
 public class AppointmentService {
-
     private final AppointmentRepository appointmentRepository;
+    private final ServiceProviderRepository serviceProviderRepository;
+    private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
-    @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, ServiceProviderRepository serviceProviderRepository, UserRepository userRepository, NotificationService notificationService) {
         this.appointmentRepository = appointmentRepository;
+        this.serviceProviderRepository = serviceProviderRepository;
+        this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
+
+    /**
+     * Creates a new appointment based on the provided appointment data transfer object (DTO).
+     *
+     * @param appointmentDto The appointment data transfer object containing necessary information for creating an appointment.
+     * @return The newly created appointment.
+     * @throws GeneralException If the client or provider associated with the appointment DTO is not found.
+     */
+    public ResponseEntity<Appointment> createAppointment(AppointmentDto appointmentDto) {
+        val client = userRepository.findByEmail(appointmentDto.getClientEmail())
+                .orElseThrow(() -> new GeneralException("Client not found"));
+        var provider = serviceProviderRepository.findById(appointmentDto.getProviderId())
+                .orElseThrow(() -> new GeneralException("Provider not found"));
+
+        Appointment appointment = new Appointment();
+        appointment.setTargetDate(appointmentDto.getDate());
+        appointment.setStartTime(appointmentDto.getStartTime());
+        appointment.setEndTime(appointmentDto.getEndTime());
+        appointment.setProvider(provider);
+        appointment.setClient(client);
+        appointment.setAppointmentStatus(SCHEDULED);
+
+        // Notify the client
+        String subject = "Appointment Confirmation";
+        String body = String.format(
+                "Dear Client, your appointment has been confirmed for %s from %s to %s.",
+                appointment.getTargetDate(), appointment.getStartTime(), appointment.getEndTime()
+        );
+        notificationService.sendEmail(appointmentDto.getClientEmail(), subject, body);
+
+        return ResponseEntity.ok(appointmentRepository.save(appointment));
+    }
+
 
     /**
      * Get appointments by service provider ID.
@@ -75,8 +116,12 @@ public class AppointmentService {
     private AppointmentDto mapToDto(Appointment appointment) {
         AppointmentDto dto = new AppointmentDto();
         dto.setId(appointment.getAppointmentId());
-        dto.setProviderName(appointment.getProvider().getName());
-        dto.setDate(appointment.getTargetDate().toString());
+        dto.setClientEmail(appointment.getClient().getEmail());
+        dto.setStartTime(appointment.getStartTime());
+        dto.setEndTime(appointment.getEndTime());
+        dto.setClientName(appointment.getClient().getFirstName().concat(" ").concat(appointment.getClient().getLastName()));
+        dto.setProviderId(appointment.getProvider().getId());
+        dto.setDate(appointment.getTargetDate());
         dto.setAppointmentStatus(appointment.getAppointmentStatus());
         return dto;
     }
