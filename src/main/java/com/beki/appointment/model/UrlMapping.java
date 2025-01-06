@@ -3,6 +3,9 @@ package com.beki.appointment.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -23,4 +26,8 @@ public class UrlMapping {
 
     @Column(name = "SERVICE_PROVIDER_ID")
     private Long serviceProviderId;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private Timestamp createdDate;
 }
