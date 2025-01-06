@@ -9,6 +9,7 @@ import com.beki.appointment.repository.AppointmentRepository;
 import com.beki.appointment.repository.ServiceProviderRepository;
 import com.beki.appointment.repository.UserRepository;
 import lombok.val;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -32,7 +33,14 @@ public class AppointmentService {
         this.notificationService = notificationService;
     }
 
-    public Appointment createAppointment(AppointmentDto appointmentDto) {
+    /**
+     * Creates a new appointment based on the provided appointment data transfer object (DTO).
+     *
+     * @param appointmentDto The appointment data transfer object containing necessary information for creating an appointment.
+     * @return The newly created appointment.
+     * @throws GeneralException If the client or provider associated with the appointment DTO is not found.
+     */
+    public ResponseEntity<Appointment> createAppointment(AppointmentDto appointmentDto) {
         val client = userRepository.findByEmail(appointmentDto.getClientEmail())
                 .orElseThrow(() -> new GeneralException("Client not found"));
         var provider = serviceProviderRepository.findById(appointmentDto.getProviderId())
@@ -54,7 +62,7 @@ public class AppointmentService {
         );
         notificationService.sendEmail(appointmentDto.getClientEmail(), subject, body);
 
-        return appointment;
+        return ResponseEntity.ok(appointmentRepository.save(appointment));
     }
 
 
