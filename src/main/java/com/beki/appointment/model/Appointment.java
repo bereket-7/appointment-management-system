@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.Where;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -35,6 +36,12 @@ public class Appointment {
 
     @Column(name = "TARGET_DATE")
     private Date targetDate;
+
+    @Column(name = "START_TIME")
+    private LocalDateTime startTime;
+
+    @Column(name = "END_TIME")
+    private LocalDateTime endTime;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
