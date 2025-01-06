@@ -44,4 +44,8 @@ public class UrlShortenerService {
         }
         return shortUrl.toString();
     }
+
+    public void  deleteByShortUrl(Long id) {
+         urlMappingRepository.deleteById(id);
+    }
 }

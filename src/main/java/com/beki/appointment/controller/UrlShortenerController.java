@@ -26,4 +26,8 @@ public class UrlShortenerController {
         String originalUrl = urlShortenerService.getOriginalUrl(shortUrl);
         return ResponseEntity.status(302).header("Location", originalUrl).build();
     }
+    @DeleteMapping("/{id}")
+    public void deleteShortUrl(@PathVariable Long id) {
+         urlShortenerService.deleteByShortUrl(id);
+    }
 }
