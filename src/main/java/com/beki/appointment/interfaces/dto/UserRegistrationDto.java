@@ -1,6 +1,8 @@
 package com.beki.appointment.interfaces.dto;
 
-import com.beki.appointment.shared.validation.Password;
+import com.beki.appointment.shared.validation.StrongPassword;
+import com.beki.appointment.shared.validation.ValidEmail;
+import com.beki.appointment.shared.validation.ValidPhone;
 import com.beki.appointment.domain.user.UserRole;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -20,16 +22,16 @@ public class UserRegistrationDto {
     private String lastName;
     
     @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @ValidEmail(message = "Invalid email format")
     @Size(max = 100, message = "Email must not exceed 100 characters")
     private String email;
     
     @NotBlank(message = "Password is required")
-    @Password(message = "Password must be at least 8 characters long, contain uppercase, lowercase, digit and special character")
+    @StrongPassword(message = "Password must be at least 8 characters long, contain uppercase, lowercase, digit and special character")
     private String password;
     
     @NotBlank(message = "Phone number is required")
-    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Invalid phone number format")
+    @ValidPhone(message = "Invalid phone number format")
     private String phone;
     
     @NotNull(message = "User role is required")
