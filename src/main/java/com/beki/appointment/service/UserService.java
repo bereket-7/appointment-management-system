@@ -2,7 +2,7 @@ package com.beki.appointment.service;
 
 import com.beki.appointment.common.UserRegistrationDto;
 import com.beki.appointment.common.UserRole;
-import com.beki.appointment.exception.GeneralException;
+import com.beki.appointment.shared.exception.GeneralException;
 import com.beki.appointment.model.User;
 import com.beki.appointment.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
