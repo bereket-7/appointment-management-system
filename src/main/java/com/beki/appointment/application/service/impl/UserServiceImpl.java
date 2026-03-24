@@ -9,6 +9,8 @@ import com.beki.appointment.shared.exception.GeneralException;
 import com.beki.appointment.shared.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
+    @CacheEvict(value = "users", allEntries = true)
     public User registerUser(UserRegistrationDto request) {
         log.info("Registering new user with email: {}", request.getEmail());
         
@@ -51,17 +54,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "users", key = "#email")
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "users", key = "#email")
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
     @Override
+    @CacheEvict(value = "users", key = "#userId")
     public User updateUser(Long userId, UserRegistrationDto request) {
         log.info("Updating user with ID: {}", userId);
         

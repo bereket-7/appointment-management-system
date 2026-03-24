@@ -12,14 +12,51 @@ import jakarta.validation.constraints.NotNull;
 @Validated
 public class AppProperties {
 
-    @NotBlank(message = "JWT secret cannot be blank")
-    private String jwtSecret;
-
     @NotNull(message = "JWT expiration cannot be null")
     private Long jwtExpiration = 86400000L; // 1 day
 
+    private Jwt jwt = new Jwt();
     private Database database = new Database();
     private Mail mail = new Mail();
+    private RateLimit rateLimit = new RateLimit();
+
+    public static class Jwt {
+        @NotBlank(message = "JWT secret cannot be blank")
+        private String secret;
+
+        @NotNull(message = "JWT expiration cannot be null")
+        private Long expirationInMs = 86400000L; // 1 day
+
+        @NotBlank(message = "JWT refresh secret cannot be blank")
+        private String refreshSecret;
+
+        @NotNull(message = "JWT refresh expiration cannot be null")
+        private Long refreshExpirationInDays = 7L; // 7 days
+
+        // Getters and setters
+        public String getSecret() { return secret; }
+        public void setSecret(String secret) { this.secret = secret; }
+        public Long getExpirationInMs() { return expirationInMs; }
+        public void setExpirationInMs(Long expirationInMs) { this.expirationInMs = expirationInMs; }
+        public String getRefreshSecret() { return refreshSecret; }
+        public void setRefreshSecret(String refreshSecret) { this.refreshSecret = refreshSecret; }
+        public Long getRefreshExpirationInDays() { return refreshExpirationInDays; }
+        public void setRefreshExpirationInDays(Long refreshExpirationInDays) { this.refreshExpirationInDays = refreshExpirationInDays; }
+    }
+
+    public static class RateLimit {
+        private boolean enabled = true;
+        private int requestsPerMinute = 60;
+        private int requestsPerHour = 1000;
+
+        // Getters and setters
+        public boolean isEnabled() { return enabled; }
+        public void setEnabled(boolean enabled) { this.enabled = enabled; }
+        public int getRequestsPerMinute() { return requestsPerMinute; }
+        public void setRequestsPerMinute(int requestsPerMinute) { this.requestsPerMinute = requestsPerMinute; }
+        public int getRequestsPerHour() { return requestsPerHour; }
+        public void setRequestsPerHour(int requestsPerHour) { this.requestsPerHour = requestsPerHour; }
+    }
 
     public static class Database {
         @NotBlank(message = "Database username cannot be blank")
@@ -60,8 +97,10 @@ public class AppProperties {
     }
 
     // Getters and setters
-    public String getJwtSecret() { return jwtSecret; }
-    public void setJwtSecret(String jwtSecret) { this.jwtSecret = jwtSecret; }
+    public Jwt getJwt() { return jwt; }
+    public void setJwt(Jwt jwt) { this.jwt = jwt; }
+    public RateLimit getRateLimit() { return rateLimit; }
+    public void setRateLimit(RateLimit rateLimit) { this.rateLimit = rateLimit; }
     public Long getJwtExpiration() { return jwtExpiration; }
     public void setJwtExpiration(Long jwtExpiration) { this.jwtExpiration = jwtExpiration; }
     public Database getDatabase() { return database; }
