@@ -3,7 +3,7 @@ package com.beki.appointment.controller;
 import com.beki.appointment.common.LoginRequest;
 import com.beki.appointment.common.LoginResponseDto;
 import com.beki.appointment.common.UserRegistrationDto;
-import com.beki.appointment.exception.GeneralException;
+import com.beki.appointment.shared.exception.GeneralException;
 import com.beki.appointment.model.User;
 import com.beki.appointment.security.CustomUserDetails;
 import com.beki.appointment.security.JwtTokenProvider;
@@ -14,11 +14,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -33,7 +36,7 @@ public class AuthController {
         this.userService = userService;
     }
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserRegistrationDto request) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody UserRegistrationDto request) {
     try
     {
         User user = userService.registerUser(request);
@@ -45,7 +48,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),

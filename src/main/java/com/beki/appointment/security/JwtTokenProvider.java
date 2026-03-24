@@ -1,30 +1,46 @@
 package com.beki.appointment.security;
 
+import com.beki.appointment.config.AppProperties;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
-    private final String jwtSecret = "hY5Kd8VkGz9sQ3PqN5RtZj4Tl2ApMj7KwXyB8SfL0VcN1HbD6RdX";
-    private final int jwtExpirationMs = 86400000; // 1 day
+    private final AppProperties appProperties;
+    private SecretKey jwtSecret;
+
+    public JwtTokenProvider(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.jwtSecret = Keys.hmacShaKeyFor(appProperties.getJwtSecret().getBytes());
+    }
 
     public String generateToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + appProperties.getJwtExpiration());
+
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + jwtExpirationMs))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .subject(userDetails.getUsername())
+                .issuedAt(now)
+                .expiration(expiryDate)
+                .signWith(jwtSecret)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parser().verifyWith(jwtSecret).build().parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             throw new RuntimeException("Invalid JWT token", e);
@@ -32,7 +48,7 @@ public class JwtTokenProvider {
     }
 
     public String getUserFromJWT(String token) {
-        Claims claims = Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+        Claims claims = Jwts.parser().verifyWith(jwtSecret).build().parseSignedClaims(token).getPayload();
         return claims.getSubject();
     }
 }
